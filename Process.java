@@ -5,13 +5,13 @@ import java.util.ArrayList;
 public class Process {
 	
 	//array of pixels
-	boolean binary[][];//used for displaying
-	int colors [][];
+	boolean binary[][];//used for displaying, processing and determining pixel location
+	int colors [][]; //storing raw data regarding pixels
 	
 	//averages of locals in an pixels area
-	int pixel = 20;
+	int pixel = 20; //20 pixel box that it takes the average color in; compares to local average to differentiate white from black
 	int localAve[][];
-	int localSD[][]; 
+	int localSD[][];
 	
 	
 	//for DFS
@@ -25,7 +25,7 @@ public class Process {
 	//for assembling Veins
 	ArrayList<int[]> startPlaces;
 	
-	
+	// old algorithm - checks if pixel brightness is greater than certain threshold
 	public void createBool(double sd1) {
 		binary = new boolean[colors.length][colors[0].length];
 		initLocal();
@@ -41,10 +41,12 @@ public class Process {
 			}
 		}
 	}
-	
+	//initializes local averages and local SD
 	public void initLocal(){
 		localAve = new int[colors.length][colors[0].length];
 		localSD = new int[colors.length][colors[0].length];
+		// go thru each 20px box and average each pixel in that box
+		// requires 3 for loops to calc avg and SD (first need avg)
 		for(int x = 0; x < colors.length; x += pixel){
 			for(int y = 0; y < colors[0].length; y += pixel){
 				int sum = 0;
@@ -82,7 +84,7 @@ public class Process {
 		}
 	}
 	
-	//method removes blemishes in photo
+	//old algorithm - method removes blemishes in photo
 	public void purify(int br){
 		for(int k = 0; k < br; k ++){
 			for(int x = 0; x < binary.length; x ++){
@@ -108,11 +110,13 @@ public class Process {
 			}
 		}
 	}
-	
+	//  reiman sum (grid with averaging surrounding pixels)
 	public void reiman(){
 		binary = new boolean[colors.length][colors[0].length];
 		initLocal();
-		
+		//create arrays that check out reiman sum as a table, use 10-4-2 to determine pixel contiunity
+		// some random bright pixels are eliminated because you check 3x3 grid around it
+		// noise is 1 or 2 pixels while lines are 3 pixels
 		int posX[] = {1,1,1,0,0,0,-1,-1,-1};
 		int posY[] = {-1,0,1,-1,0,1,-1,1,1};
 		int ratings[] = {2,4,2,4,10,4,2,4,2};
@@ -143,7 +147,7 @@ public class Process {
 			}
 		}
 	}
-	
+	// outer flooding algorithm, sets stuff up
 	public void DFS(int span, int pixelClump, int areaTreshold){
 		//System.out.println(areaThreshold);
 		SPAN = span;
@@ -180,6 +184,7 @@ public class Process {
 			}
 		}	
 	}
+	// recursive flooding algorithm that calls on a pixel and tries to flood pixels around it
 	public int DFSRecursive(int x, int y, ArrayList<int[]> coords, int span){
 		//used to find the spread of clump
 		if(x < minX) minX = x;
