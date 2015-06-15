@@ -1,6 +1,6 @@
 import java.awt.image.BufferedImage;
 
-
+// will allow user to combine a bunch of images to one master image
 public class Grid {
 	boolean[][] myFirstPic;
 	public void addImage(boolean[][] sdf){
